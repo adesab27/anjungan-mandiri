@@ -32,6 +32,12 @@
         <p class="text-gray-300 mt-2">Silakan panggil nomor antrian berikutnya</p>
     </div>
 
+    <!-- NOTIFIKASI ANTREAN MASUK -->
+    <div id="notifikasiAntrean" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl hidden z-50 animate-bounce">
+        <p class="font-bold text-lg">Antrean Baru Masuk!</p>
+        <p id="notifikasiTeks" class="text-sm mt-1">-</p>
+    </div>
+
     <!-- CARD LOKET -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-10 mt-10">
 
@@ -91,18 +97,91 @@
 
     <!-- SCRIPT -->
     <script>
+        // State untuk menyimpan nomor saat ini di setiap loket
+        let currentQueue = {
+            1: { nomor: 'A-000', kode: 'A' },
+            2: { nomor: 'B-000', kode: 'B' },
+            3: { nomor: 'C-000', kode: 'C' },
+            4: { nomor: 'D-000', kode: 'D' }
+        };
+
+        // Initialize dari localStorage jika ada
+        const savedQueue = localStorage.getItem('currentQueue');
+        if (savedQueue) {
+            currentQueue = JSON.parse(savedQueue);
+        }
+        updateLoketDisplay();
+
+        // Simpan ke localStorage
+        function saveCurrentQueue() {
+            localStorage.setItem('currentQueue', JSON.stringify(currentQueue));
+        }
+
+        // Update tampilan loket
+        function updateLoketDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('loket' + i).innerText = currentQueue[i].nomor;
+            }
+        }
+
         function nextQueue(loket) {
-            fetch(`/next-queue/${loket}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('loket' + loket).innerText = data.nomor;
-            });
+            // Ambil kode loket
+            const kode = currentQueue[loket].kode;
+            
+            // Extract nomor dari nomor saat ini (contoh A-001 -> 001)
+            const parts = currentQueue[loket].nomor.split('-');
+            let num = parseInt(parts[1]) || 0;
+            
+            // Increment nomor
+            num++;
+            const newNumber = `${kode}-${String(num).padStart(3, '0')}`;
+            
+            // Update state
+            currentQueue[loket].nomor = newNumber;
+            saveCurrentQueue();
+            updateLoketDisplay();
+
+            // KIRIM PERINTAH KE MONITOR
+            const callData = {
+                nomor: newNumber,
+                loket: loket,
+                kode: kode,
+                waktu: new Date().getTime()
+            };
+            localStorage.setItem('panggilanBaru', JSON.stringify(callData));
+
+            // Hapus notifikasi setelah dipanggil
+            hideNotification();
+        }
+
+        // LISTENER UNTUK ANTREAN BARU
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'queueBaru' && e.newValue) {
+                const data = JSON.parse(e.newValue);
+                showNotification(data);
+            }
+        });
+
+        function showNotification(data) {
+            const notif = document.getElementById('notifikasiAntrean');
+            const notifTeks = document.getElementById('notifikasiTeks');
+            
+            notifTeks.innerText = `Loket ${data.loket}: ${data.nomor} (${data.layanan})`;
+            notif.classList.remove('hidden');
+            
+            // Notifikasi suara
+            playNotificationSound();
+        }
+
+        function hideNotification() {
+            document.getElementById('notifikasiAntrean').classList.add('hidden');
+        }
+
+        function playNotificationSound() {
+            const synth = window.speechSynthesis;
+            const utter = new SpeechSynthesisUtterance('Antrean baru masuk');
+            utter.lang = 'id-ID';
+            synth.speak(utter);
         }
 
         // JAM REALTIME

@@ -61,7 +61,7 @@
             <div class="w-full bg-blue-900 py-4 text-center border-y-4 border-amber-500">
                 <span class="text-2xl font-bold opacity-80 uppercase tracking-widest">Nomor Antrean</span>
             </div>
-            <h2 id="nomorBesar" class="text-[12rem] font-black leading-none my-4 text-amber-400">---</h2>
+            <h2 id="nomorBesar" class="text-[8rem] font-black leading-none my-4 text-amber-400">---</h2>
         </div>
 
         <!-- VIDEO / INFORMASI (TENGAH/KANAN) -->
@@ -111,7 +111,7 @@
             document.getElementById('date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         }, 1000);
 
-        // MENDENGARKAN DATA DARI KIOSK
+        // MENDENGARKAN DATA DARI PETUGAS
         window.addEventListener('storage', (e) => {
             if (e.key === 'panggilanBaru') {
                 const data = JSON.parse(e.newValue);
@@ -127,8 +127,9 @@
             document.getElementById('nomorBesar').innerText = nomor;
             document.getElementById('loketLabel').innerText = `LOKET ${loket}`;
             
-            // Update history di bawah
-            document.getElementById('hist' + loket).innerText = nomor;
+            // Update history di bawah - mapping berdasarkan loket
+            const histMap = { 1: 'histA', 2: 'histB', 3: 'histC', 4: 'histD' };
+            document.getElementById(histMap[loket]).innerText = nomor;
 
             // Suara Panggilan
             speak(`Nomor antrean ${nomor}, silakan menuju loket ${loket}`);

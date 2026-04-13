@@ -57,7 +57,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             
             <!-- Loket 1 -->
-            <button onclick="generateTicket('A', 'Pendaftaran Tamu Dinas')" 
+            <button onclick="generateTicket('A', 'Pendaftaran Tamu Dinas', 1)" 
                 class="kiosk-card bg-blue-700 hover:bg-blue-600 p-8 rounded-3xl shadow-xl flex items-center gap-6 transition-all duration-200 border-b-8 border-blue-900">
                 <i class="fas fa-briefcase text-4xl"></i>
                 <div class="text-left">
@@ -67,7 +67,7 @@
             </button>
 
             <!-- Loket 2 -->
-            <button onclick="generateTicket('B', 'Kunjungan Narapidana')" 
+            <button onclick="generateTicket('B', 'Kunjungan Narapidana', 2)" 
                 class="kiosk-card bg-emerald-700 hover:bg-emerald-600 p-8 rounded-3xl shadow-xl flex items-center gap-6 transition-all duration-200 border-b-8 border-emerald-900">
                 <i class="fas fa-users text-4xl"></i>
                 <div class="text-left">
@@ -77,7 +77,7 @@
             </button>
 
             <!-- Loket 3 -->
-            <button onclick="generateTicket('C', 'Layanan Informasi')" 
+            <button onclick="generateTicket('C', 'Layanan Informasi', 3)" 
                 class="kiosk-card bg-amber-600 hover:bg-amber-500 p-8 rounded-3xl shadow-xl flex items-center gap-6 transition-all duration-200 border-b-8 border-amber-800">
                 <i class="fas fa-info-circle text-4xl"></i>
                 <div class="text-left">
@@ -87,7 +87,7 @@
             </button>
 
             <!-- Loket 4 -->
-            <button onclick="generateTicket('D', 'Laporan / Pengaduan')" 
+            <button onclick="generateTicket('D', 'Laporan / Pengaduan', 4)" 
                 class="kiosk-card bg-rose-700 hover:bg-rose-600 p-8 rounded-3xl shadow-xl flex items-center gap-6 transition-all duration-200 border-b-8 border-rose-900">
                 <i class="fas fa-bullhorn text-4xl"></i>
                 <div class="text-left">
@@ -117,10 +117,15 @@
 
     <!-- JavaScript Logic -->
     <script>
+        // Reset semua data ketika halaman di-refresh
         let counters = { A: 0, B: 0, C: 0, D: 0 };
+        localStorage.removeItem('queueCounters');
+        localStorage.removeItem('currentQueue');
+        localStorage.removeItem('history');
+        
         let closeTimer;
 
-        function generateTicket(kode, layanan) {
+        function generateTicket(kode, layanan, loket) {
             // Reset timer jika user klik cepat
             clearTimeout(closeTimer);
 
@@ -140,6 +145,16 @@
 
             // Suara AI
             speak(`Nomor antrean ${finalNumber}.`);
+
+            // Kirim notifikasi ke petugas
+            const queueData = {
+                nomor: finalNumber,
+                loket: loket,
+                layanan: layanan,
+                kode: kode,
+                waktu: now.getTime()
+            };
+            localStorage.setItem('queueBaru', JSON.stringify(queueData));
 
             // 1. Print Otomatis
             setTimeout(() => {
