@@ -106,12 +106,10 @@
     <script>
         // Update Jam
         setInterval(() => {
-            fetch('/antrian-terakhir')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('nomor').innerText = data.nomor;
-            });
-        }, 3000);
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID');
+            document.getElementById('date').innerText = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+        }, 1000);
 
         // MENDENGARKAN DATA DARI KIOSK
         window.addEventListener('storage', (e) => {

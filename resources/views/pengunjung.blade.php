@@ -121,45 +121,35 @@
         let closeTimer;
 
         function generateTicket(kode, layanan) {
+            // Reset timer jika user klik cepat
             clearTimeout(closeTimer);
 
-            fetch('/ambil-antrian', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ kode: kode, layanan: layanan })
-            })
-            .then(res => res.json())
-            .then(data => {
+            counters[kode]++;
+            const num = String(counters[kode]).padStart(3, '0');
+            const finalNumber = `${kode}-${num}`;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID');
+            const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-                const finalNumber = data.nomor;
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('id-ID');
-                const dateStr = now.toLocaleDateString('id-ID', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
+            document.getElementById('ticketNumber').innerText = finalNumber;
+            document.getElementById('serviceName').innerText = layanan;
+            document.getElementById('ticketTime').innerText = `${dateStr} | ${timeStr}`;
 
-                document.getElementById('ticketNumber').innerText = finalNumber;
-                document.getElementById('serviceName').innerText = layanan;
-                document.getElementById('ticketTime').innerText = `${dateStr} | ${timeStr}`;
+            // Tampilkan modal
+            document.getElementById('ticketModal').classList.remove('hidden');
 
-                document.getElementById('ticketModal').classList.remove('hidden');
+            // Suara AI
+            speak(`Nomor antrean ${finalNumber}.`);
 
-                speak(`Nomor antrean ${finalNumber}.`);
+            // 1. Print Otomatis
+            setTimeout(() => {
+                window.print();
+            }, 500);
 
-                setTimeout(() => {
-                    window.print();
-                }, 500);
-
-                closeTimer = setTimeout(() => {
-                    closeModal();
-                }, 3000);
-            });
+            // 2. Auto Close 3 Detik
+            closeTimer = setTimeout(() => {
+                closeModal();
+            }, 3000);
         }
 
         function closeModal() {
