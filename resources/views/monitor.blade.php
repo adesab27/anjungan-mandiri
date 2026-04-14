@@ -23,16 +23,21 @@
             100% { background-color: #1e3a8a; }
         }
 
-        .running-text {
-            white-space: nowrap;
-            display: inline-block;
-            animation: marquee 20s linear infinite;
-        }
+.running-text {
+    display: inline-block;
+    font-size: 2rem; /* lebih besar (bisa jadi 3rem kalau mau gede banget) */
+    padding-left: 100%; /* mulai dari luar kanan */
+    animation: marquee 25s linear infinite;
+}
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+@keyframes marquee {
+    0% {
+        transform: translateX(0); /* mulai dari kanan */
+    }
+    100% {
+        transform: translateX(-100%); /* geser ke kiri */
+    }
+}
     </style>
 </head>
 
@@ -85,9 +90,9 @@
 </div>
 
 <!-- RUNNING TEXT -->
-<footer class="fixed bottom-0 w-full bg-slate-900 p-3">
-    <p class="running-text text-xl font-bold">
-        Selamat Datang di Lapas Pekalongan • Harap Tertib Mengantre •
+<footer class="fixed bottom-0 w-full bg-slate-900 p-3 overflow-hidden">
+    <p class="running-text font-bold whitespace-nowrap">
+                        Selamat Datang di Lembaga Pemasyarakatan Kelas IIA Pekalongan • Dilarang Memberikan Gratifikasi dalam bentuk apapun kepada Petugas kami • Pelayanan pendaftaran dibuka pukul 08.00 s/d 12.00 WIB • Budayakan Mengantre dengan Tertib •
     </p>
 </footer>
 

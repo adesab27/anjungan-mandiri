@@ -17,7 +17,7 @@
             body * { visibility: hidden; }
             #ticketModal, #ticketModal * { visibility: visible; }
             #ticketModal { 
-                position: absolute; left: 0; top: 0; width: 100%; 
+                position: absolute; left: 0; top: 0; width: 100%; height: fit-content;
                 background: white !important; color: black !important;
             }
             .no-print { display: none !important; }
