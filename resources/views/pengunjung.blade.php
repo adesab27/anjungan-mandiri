@@ -144,7 +144,9 @@
             document.getElementById('ticketModal').classList.remove('hidden');
 
             // Suara AI
-            speak(`Nomor antrean ${finalNumber}.`);
+            setTimeout(() => {
+                speak(`Nomor antrian ${finalNumber}`);
+            }, 500);
 
             // Kirim notifikasi ke petugas
             const queueData = {
@@ -173,9 +175,25 @@
 
         function speak(text) {
             const synth = window.speechSynthesis;
+
+            // hentikan suara sebelumnya (biar tidak tumpuk)
+            synth.cancel();
+
             const utter = new SpeechSynthesisUtterance(text);
+
             utter.lang = 'id-ID';
-            utter.rate = 1.1; // Sedikit lebih cepat agar pas dengan durasi 3 detik
+            utter.rate = 0.75;   // lebih lambat (seperti bank)
+            utter.pitch = 1;   // netral tapi stabil
+            utter.volume = 1;
+
+            // cari voice Indonesia (kalau tersedia)
+            let voices = synth.getVoices();
+            let indoVoice = voices.find(v => v.lang.includes('id'));
+
+            if (indoVoice) {
+                utter.voice = indoVoice;
+            }
+
             synth.speak(utter);
         }
 
