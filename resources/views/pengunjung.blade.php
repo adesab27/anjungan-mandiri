@@ -173,6 +173,30 @@
             document.getElementById('ticketModal').classList.add('hidden');
         }
 
+        // function speak(text) {
+        //     const synth = window.speechSynthesis;
+
+        //     // hentikan suara sebelumnya (biar tidak tumpuk)
+        //     synth.cancel();
+
+        //     const utter = new SpeechSynthesisUtterance(text);
+
+        //     utter.lang = 'id-ID';
+        //     utter.rate = 0.75;   // lebih lambat (seperti bank)
+        //     utter.pitch = 1;   // netral tapi stabil
+        //     utter.volume = 1;
+
+        //     // cari voice Indonesia (kalau tersedia)
+        //     let voices = synth.getVoices();
+        //     let indoVoice = voices.find(v => v.lang.includes('id'));
+
+        //     if (indoVoice) {
+        //         utter.voice = indoVoice;
+        //     }
+
+        //     synth.speak(utter);
+        // }
+
         setInterval(() => {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID');
